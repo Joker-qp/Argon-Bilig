@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+:root {
+  --color-olive-50: #f6f7f2;
+  --color-olive-100: #ebede2;
+  --color-olive-200: #d7dbc5;
+  --color-olive-500: #5c6f34;
+  --color-olive-600: #485827;
+  --color-olive-700: #38451e;
+  --color-olive-800: #2c3718;
+  --color-olive-900: #1e2610;
+}
+
+@keyframes hud-laser {
+  0% { transform: translateY(0%); opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0.8; }
+}
+
+.scanline-laser-anim {
+  animation: hud-laser 1.6s ease-in-out infinite;
+}
