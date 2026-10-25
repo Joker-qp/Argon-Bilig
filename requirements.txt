@@ -1,0 +1,21 @@
+# --- Arayüz & Sunucu ---
+streamlit>=1.35.0
+
+# --- Yapay Zekâ & Çıkarım ---
+# CachyOS üzerinde harici ekran kartın (CUDA) devredeyse GPU, değilse otomatik CPU modunda çalışır
+onnxruntime-gpu>=1.18.0
+numpy>=1.24.0
+
+# --- Görüntü İşleme ---
+# Headless sürüm CachyOS/Linux terminalinde GUI/Qt kütüphanesi bağımlılık çakışmalarını önler
+opencv-python-headless>=4.8.0
+pillow>=10.0.0
+
+# --- Model & Depo Yönetimi ---
+huggingface-hub>=0.23.0
+pyyaml>=6.0.1
+requests>=2.31.0
+
+# --- CBS / Haritalama (İlerleyen Aşamalar İçin) ---
+folium>=0.16.0
+streamlit-folium>=0.20.0

@@ -1,0 +1,120 @@
+# ==============================================================================
+# ARGON-BILIG — MASTER AGRO-AI KONFİGÜRASYONU & BİLGİ BANKASI
+# ==============================================================================
+
+app:
+  name: "Argon-bilig (Gemlik Agro-AI)"
+  version: "1.0.0-local"
+  language: "tr"
+  debug: false
+
+# Hugging Face Model Deposu
+# Sistem modelleri local_dir içinde bulamazsa bu repodan otomatik çeker
+huggingface:
+  repo_id: "JoQert/argon-bilig-olive-models"
+  yolo_filename: "yolov8_zeytin_seg.onnx"
+  classifier_filename: "efficientnet_classifier.onnx"
+  local_dir: "models"
+
+# Donanım ve Hızlandırma Tercihleri
+hardware:
+  prefer_cuda: true
+  providers:
+    - "CUDAExecutionProvider"
+    - "CPUExecutionProvider"
+
+# Model Çıkarım Sabitleri & Boyutlandırma
+model_pipeline:
+  yolo_size: 640
+  proto_size: 160
+  classifier_size: 224
+  polygon_points: 84
+  letterbox_color: [114, 114, 114]
+  # EfficientNet ImageNet Normalizasyon Sabitleri
+  norm_mean: [0.485, 0.456, 0.406]
+  norm_std: [0.229, 0.224, 0.225]
+
+  # Tespit ve Karar Eşikleri
+  thresholds:
+    leaf_confidence: 0.30 # YOLO yaprak kabul eşiği
+    lesion_confidence: 0.22 # YOLO lezyon kabul eşiği
+    fusion_lesion_conf: 35.0 # Füzyonda Halkalı Leke'yi baskın kılan güven eşiği (%)
+    fusion_severity_ratio: 0.50 # Füzyonda lezyon alan oranı eşiği (%)
+
+# Hedef Teşhis Sınıfları
+classes:
+  peacock: "Halkalı Leke (Spilocaea oleagina)"
+  mite: "Zeytin Pas Akarı (Aceria oleae)"
+  healthy: "Sağlıklı Gemlik Yaprağı"
+
+# Zirai Mücadele ve T.C. Tarım ve Orman Bakanlığı Reçeteleri
+prescriptions:
+  healthy:
+    title: "Sağlıklı Gemlik Yaprağı"
+    advice: "Bakanlık Tavsiyesi: Yaprak dokusu ve morfolojisi temiz. Standart kültürel bakım ve budama takvimine devam ediniz."
+  peacock:
+    title: "Zeytin Halkalı Leke Hastalığı (Spilocaea oleagina)"
+    advice: "Bakanlık Reçetesi: %1.0 - %1.5'lik Bordo Bulamacı veya Bakır Oksiklorür uygulayınız. Ağacın iç taç kısımlarını ve alt dallarını bolca yıkayınız."
+    treatments:
+      early: "%1.0 - %1.5 Bordo Bulamacı (Sonbahar/İlkbahar Yağış Öncesi)"
+      moderate: "Bakır Oksiklorid (WP) veya Bakır Hidroksit Preparatları"
+      severe: "Azoxystrobin + Difenoconazole veya Kresoxim-methyl Sistemik Fungusit"
+  mite:
+    title: "Zeytin Pas Akarı (Aceria oleae / Aculus olearius)"
+    advice: "Bakanlık Reçetesi: Zeytin Pas Akarı kolonizasyonu tespit edildi. Islanabilir Kükürt (WP) veya Abamectin uygulayınız."
+    treatments:
+      standard: "Islanabilir Kükürt (WP) (800g/100L su)"
+      severe: "T.C. Tarım ve Orman Bakanlığı Ruhsatlı Abamectin Etkili Maddeli Akarisit"
+
+# Zeytin Çeşit Profilleri & İklimsel Risk Tetikleyicileri
+cultivars:
+  active: "gemlik"
+  presets:
+    gemlik:
+      name: "Gemlik (Trilye)"
+      scientific_name: "Olea europaea cv. Gemlik"
+      chilling_hours: 500
+      thresholds:
+        peacock_humidity_min: 85
+        peacock_temp_min: 10
+        peacock_temp_max: 20
+        peacock_rain_trigger: 2.0
+        mite_temp_min: 22
+        mite_humidity_max: 70
+        mite_rain_suppression: 5.0
+    ayvalik:
+      name: "Ayvalık (Edremit)"
+      scientific_name: "Olea europaea cv. Ayvalik"
+      chilling_hours: 700
+      thresholds:
+        peacock_humidity_min: 80
+        peacock_temp_min: 12
+        peacock_temp_max: 22
+        peacock_rain_trigger: 2.5
+        mite_temp_min: 23
+        mite_humidity_max: 75
+        mite_rain_suppression: 6.0
+    memecik:
+      name: "Memecik"
+      scientific_name: "Olea europaea cv. Memecik"
+      chilling_hours: 400
+      thresholds:
+        peacock_humidity_min: 85
+        peacock_temp_min: 10
+        peacock_temp_max: 21
+        peacock_rain_trigger: 2.0
+        mite_temp_min: 24
+        mite_humidity_max: 65
+        mite_rain_suppression: 4.0
+
+# CBS & Konum Parametreleri
+location:
+  name: "Gemlik Zeytin Havzası, Bursa"
+  latitude: 40.4326
+  longitude: 29.1578
+  default_risk_radius_km: 2.5
+
+# ESP32 ve Saha İstasyonu Varsayılanları
+station:
+  node_path: "esp32_station"
+  polling_interval_sec: 7
